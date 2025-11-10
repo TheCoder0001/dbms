@@ -1,0 +1,32 @@
+Write a PL/SQL block for following requirements and handle the
+exceptions. Roll no. of students will be entered by the user.
+Attendance of roll no. entered by user will be checked in the
+Stud table. If attendance is less than 75% then display the
+message “Term not granted” and set the status in stud table as
+“Detained”. Otherwise display message “Term granted” and set the
+status in stud table as “Not Detained”
+ Student (Roll, Name, Attendance ,Status)
+
+
+
+CREATE TABLE Student(Roll NUMBER PRIMARY KEY, Name VARCHAR2(30), Attendance NUMBER, Status VARCHAR2(20));
+
+INSERT INTO Student VALUES (1,'Riya',80,'');
+INSERT INTO Student VALUES (2,'Arjun',60,'');
+
+
+DECLARE
+  v_roll NUMBER := &RollNo;
+  v_att NUMBER;
+BEGIN
+  SELECT Attendance INTO v_att FROM Student WHERE Roll = v_roll;
+
+  IF v_att < 75 THEN
+    UPDATE Student SET Status='Detained' WHERE Roll=v_roll;
+    DBMS_OUTPUT.PUT_LINE('Term Not Granted');
+  ELSE
+    UPDATE Student SET Status='Not Detained' WHERE Roll=v_roll;
+    DBMS_OUTPUT.PUT_LINE('Term Granted');
+  END IF;
+END;
+/

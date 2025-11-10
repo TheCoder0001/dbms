@@ -1,0 +1,53 @@
+Implement MYSQL/Oracle database connectivity with PHP/
+python/Java Implement Database navigation operations (add,
+delete, edit,).
+
+
+
+
+import mysql.connector
+
+con = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="test"
+)
+
+cur = con.cursor()
+
+# Insert
+cur.execute("INSERT INTO emp VALUES(1,'Rohan',55000)")
+con.commit()
+
+# Display
+cur.execute("SELECT * FROM emp")
+for row in cur.fetchall():
+    print(row)
+
+# Update
+cur.execute("UPDATE emp SET salary=60000 WHERE emp_no=1")
+con.commit()
+
+# Delete
+cur.execute("DELETE FROM emp WHERE emp_no=1")
+con.commit()
+
+con.close()
+
+
+OR
+
+import mysql.connector
+
+con = mysql.connector.connect(host="localhost", user="root", password="", database="test")
+cur = con.cursor()
+
+cur.execute("INSERT INTO emp VALUES(101,'Rahul',50000)")
+con.commit()
+
+cur.execute("SELECT * FROM emp")
+for i in cur.fetchall():
+    print(i)
+
+con.close()

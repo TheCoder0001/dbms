@@ -1,0 +1,35 @@
+Write a program to implement MongoDB database connectivity with
+PHP/python/Java Implement Database navigation CRUD operations
+(add, delete, edit etc.)
+
+
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017")
+db = client.mydb
+emp = db.Employee
+
+# Insert
+emp.insert_one({"Name":"Rohan","Company":"TCS","Salary":55000})
+
+# Display
+for e in emp.find():
+    print(e)
+
+# Update
+emp.update_one({"Name":"Rohan"},{"$set":{"Salary":60000}})
+
+# Delete
+emp.delete_one({"Name":"Rohan"})
+
+
+OR
+
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["company"]
+col = db["employee"]
+
+col.insert_one({"name": "Rahul", "salary": 40000})
+print(list(col.find()))

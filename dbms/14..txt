@@ -1,0 +1,121 @@
+Design MongoDB database and perform following Map reduce
+operation:
+Create Employee collection by considering following Fields:
+i. Name: Embedded Doc (FName, LName)
+ii. Company Name: String
+iii. Salary: Number
+iv. Designation: String
+v. Age: Number
+vi. Expertise: Array
+vii. DOB: String or Date
+viii. Email id: String
+ix. Contact: String
+x. Address: Array of Embedded Doc (PAddr, LAddr)
+Execute the following query:
+1. Display the total salary of per company
+2. Display the total salary of company Name:"TCS"
+3. Return the average salary of company whose address is “Pune".
+4. Display total count for “City=Pune”
+5. Return count for city pune and age greater than 40.
+
+
+db.Employee.insertMany([
+{
+ Emp_id: 1,
+ Name: {FName: "Rohan", LName: "Sharma"},
+ Company_Name: "TCS",
+ Salary: 90000,
+ Designation: "DBA",
+ Age: 32,
+ Expertise: ["MongoDB","SQL"],
+ DOB: "1993-03-03",
+ Email: "rohan@gmail.com",
+ Contact: "9991112222",
+ Address: [{PAddr:"Pune", LAddr:"Mumbai"}]
+},
+{
+ Emp_id: 2,
+ Name: {FName: "Priya", LName: "Patil"},
+ Company_Name: "Infosys",
+ Salary: 120000,
+ Designation: "Developer",
+ Age: 27,
+ Expertise: ["Java","Spring"],
+ DOB: "1997-07-10",
+ Email: "priya@gmail.com",
+ Contact: "8881112222",
+ Address: [{PAddr:"Pune", LAddr:"Pune"}]
+},
+{
+ Emp_id: 3,
+ Name: {FName: "Amit", LName: "Deshmukh"},
+ Company_Name: "TCS",
+ Salary: 85000,
+ Designation: "DBA",
+ Age: 45,
+ Expertise: ["MongoDB","Python"],
+ DOB: "1990-09-09",
+ Email: "amit@gmail.com",
+ Contact: "7771112222",
+ Address: [{PAddr:"Nashik", LAddr:"Pune"}]
+},
+{
+ Emp_id: 4,
+ Name: {FName: "Sara", LName: "Khan"},
+ Company_Name: "TechM",
+ Salary: 75000,
+ Designation: "Tester",
+ Age: 29,
+ Expertise: ["Selenium","Java"],
+ DOB: "1995-02-02",
+ Email: "sara@gmail.com",
+ Contact: "6661112222",
+ Address: [{PAddr:"Mumbai", LAddr:"Mumbai"}]
+},
+{
+ Emp_id: 5,
+ Name: {FName: "Neha", LName: "Kulkarni"},
+ Company_Name: "Infosys",
+ Salary: 100000,
+ Designation: "DBA",
+ Age: 42,
+ Expertise: ["MongoDB","SQL","AWS"],
+ DOB: "1992-12-12",
+ Email: "neha@gmail.com",
+ Contact: "5551112222",
+ Address: [{PAddr:"Pune", LAddr:"Pune"}]
+}
+])
+
+
+db.Employee.mapReduce(
+ function(){ emit(this.Company_Name, this.Salary); },
+ function(key, values){ return Array.sum(values); },
+ { out:"TotalSalaryPerCompany" }
+)
+
+db.TotalSalaryPerCompany.find({_id:"TCS"})
+
+
+
+
+
+db.Employee.aggregate([
+ { $unwind:"$Address" },
+ { $match:{"Address.PAddr":"Pune"}},
+ { $group:{_id:null, AvgSalary:{ $avg:"$Salary" }}}
+])
+
+
+db.Employee.aggregate([
+ { $unwind:"$Address" },
+ { $match:{"Address.PAddr":"Pune"}},
+ { $count:"TotalEmployees"}
+])
+
+
+db.Employee.aggregate([
+ { $unwind:"$Address" },
+ { $match:{"Address.PAddr":"Pune", Age:{ $gt:40 }}},
+ { $count:"Count"}
+])

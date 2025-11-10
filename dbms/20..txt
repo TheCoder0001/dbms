@@ -1,0 +1,79 @@
+Write a Stored Procedure namely proc_Grade for the categorization
+of student. If marks scored by students in examination is <=1500
+and marks>=990 then student will be placed in distinction
+category if marks scored are between 989 and 900 category is
+first class, if marks 899 and 825 category is Higher Second
+Class.
+Write a PL/SQL block for using procedure created with above
+requirement.
+Stud_Marks(name, total_marks),
+Result(Roll,Name, Class)
+
+
+
+CREATE TABLE Stud_Marks(
+   Name VARCHAR2(30),
+   Total_Marks NUMBER
+);
+
+CREATE TABLE Result(
+   Roll NUMBER GENERATED ALWAYS AS IDENTITY,
+   Name VARCHAR2(30),
+   Class VARCHAR2(30)
+);
+
+INSERT INTO Stud_Marks VALUES('Rohan', 1250);
+INSERT INTO Stud_Marks VALUES('Priya', 960);
+INSERT INTO Stud_Marks VALUES('Amit', 880);
+INSERT INTO Stud_Marks VALUES('Sara', 700);
+
+CREATE OR REPLACE PROCEDURE proc_Grade(p_name VARCHAR2, p_marks NUMBER)
+AS
+   v_class VARCHAR2(30);
+BEGIN
+   IF p_marks BETWEEN 990 AND 1500 THEN
+      v_class := 'Distinction';
+   ELSIF p_marks BETWEEN 900 AND 989 THEN
+      v_class := 'First Class';
+   ELSIF p_marks BETWEEN 825 AND 899 THEN
+      v_class := 'Higher Second Class';
+   ELSE
+      v_class := 'Pass / Other';
+   END IF;
+
+   INSERT INTO Result(Name, Class) VALUES(p_name, v_class);
+END;
+/
+
+
+--call
+BEGIN
+  proc_Grade('Rohan',1250);
+  proc_Grade('Priya',960);
+END;
+/
+
+
+OR
+
+CREATE OR REPLACE PROCEDURE proc_Grade(p_name VARCHAR, p_marks NUMBER) AS
+  p_class VARCHAR(30);
+BEGIN
+  IF p_marks BETWEEN 990 AND 1500 THEN p_class:='Distinction';
+  ELSIF p_marks BETWEEN 900 AND 989 THEN p_class:='First Class';
+  ELSIF p_marks BETWEEN 825 AND 899 THEN p_class:='Higher Second Class';
+  END IF;
+
+  INSERT INTO Result VALUES(Result_seq.NEXTVAL, p_name, p_class);
+END;
+/
+
+
+--call
+DECLARE
+  nm VARCHAR(30) := '&Name';
+  mk NUMBER := &Marks;
+BEGIN
+  proc_Grade(nm, mk);
+END;
+/

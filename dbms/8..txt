@@ -1,0 +1,79 @@
+Consider following Relation:
+Companies(comp_id, name, cost, year)
+Orders(comp_id, domain, quantity)
+Execute the following query:
+1. Find names, costs, domains and quantities for companies using
+inner join.
+2. Find names, costs, domains and quantities for companies using
+left outer join.
+3. Find names, costs, domains and quantities for companies using
+right outer join.
+4. Find names, costs, domains and quantities for companies using
+Union operator.
+5. Create View View1 by selecting both tables to show company
+name and quantities.
+6. Create View View2 by selecting any two columns and perform
+insert update delete operations.
+7. Display content of View1, View2
+
+
+CREATE TABLE Companies(
+  comp_id INT PRIMARY KEY,
+  name VARCHAR(30),
+  cost INT,
+  year INT
+);
+
+CREATE TABLE Orders(
+  comp_id INT,
+  domain VARCHAR(30),
+  quantity INT,
+  FOREIGN KEY(comp_id) REFERENCES Companies(comp_id)
+);
+
+
+INSERT INTO Companies VALUES
+(1,'Infosys',50000,2020),
+(2,'TCS',75000,2021),
+(3,'Wipro',62000,2022);
+
+INSERT INTO Orders VALUES
+(1,'Software',10),
+(2,'Banking',5),
+(3,'Cloud',7);
+
+
+SELECT name, cost, domain, quantity
+FROM Companies C
+JOIN Orders O ON C.comp_id=O.comp_id;
+
+SELECT name, cost, domain, quantity
+FROM Companies C
+LEFT JOIN Orders O ON C.comp_id=O.comp_id;
+
+
+SELECT name, cost, domain, quantity
+FROM Companies C
+RIGHT JOIN Orders O ON C.comp_id=O.comp_id;
+
+
+SELECT name, cost FROM Companies
+UNION
+SELECT domain, quantity FROM Orders;
+
+
+CREATE VIEW View1 AS
+SELECT C.name, O.quantity
+FROM Companies C JOIN Orders O ON C.comp_id=O.comp_id;
+
+
+CREATE VIEW View2 AS SELECT comp_id, name FROM Companies;
+
+INSERT INTO View2 VALUES (4,'HCL');
+UPDATE View2 SET name='TechM' WHERE comp_id=1;
+DELETE FROM View2 WHERE comp_id=4;
+
+
+
+SELECT * FROM View1;
+SELECT * FROM View2;

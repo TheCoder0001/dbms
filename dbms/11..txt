@@ -1,0 +1,130 @@
+Design and Develop MongoDB Queries using CRUD operations:
+Create Employee collection by considering following Fields:
+i. Name: Embedded Doc (FName, LName)
+ii. Company Name: String
+iii. Salary: Number
+iv. Designation: String
+v. Age: Number
+vi. Expertise: Array
+vii. DOB: String or Date
+viii. Email id: String
+ix. Contact: String
+x. Address: Array of Embedded Doc (PAddr, LAddr)
+Insert at least 5 documents in collection by considering above
+attribute and execute following queries:
+1. Final name of Employee where age is less than 30 and salary
+more than 50000.
+2. Creates a new document if no document in the employee
+collection contains
+ {Designation: "Tester", Company_name: "TCS", Age: 25}
+3. Selects all documents in the collection where the field age
+has a value less than 30 or the value of the salary field is
+greater than 40000.
+4. Find documents where Designation is not equal to "Developer".
+5. Find _id, Designation, Address and Name from all documents
+where Company_name is "Infosys".
+6. Display only FName and LName of all Employees
+
+
+db.employee.insertMany([
+{
+  Emp_id: 1,
+  Name: {FName: "Amit", LName: "Patil"},
+  Company_name: "TCS",
+  Salary: 35000,
+  Designation: "Tester",
+  Age: 25,
+  Expertise: ["MongoDB", "Java"],
+  DOB: "1999-05-17",
+  Email: "amit@tcs.com",
+  Contact: "9000000001",
+  Address: [{PAddr: "Pune", LAddr: "Mumbai"}]
+},
+
+{
+  Emp_id: 2,
+  Name: {FName: "Riya", LName: "Sharma"},
+  Company_name: "Infosys",
+  Salary: 42000,
+  Designation: "Developer",
+  Age: 28,
+  Expertise: ["Python", "MySQL"],
+  DOB: "1996-02-21",
+  Email: "riya@infosys.com",
+  Contact: "9000000002",
+  Address: [{PAddr: "Nashik", LAddr: "Pune"}]
+},
+
+{
+  Emp_id: 3,
+  Name: {FName: "Sagar", LName: "Kulkarni"},
+  Company_name: "TCS",
+  Salary: 38000,
+  Designation: "Developer",
+  Age: 26,
+  Expertise: ["NodeJS", "MongoDB"],
+  DOB: "1998-10-14",
+  Email: "sagar@tcs.com",
+  Contact: "9000000003",
+  Address: [{PAddr: "Pune", LAddr: "Pune"}]
+},
+
+{
+  Emp_id: 4,
+  Name: {FName: "Sneha", LName: "Kulkarni"},
+  Company_name: "Wipro",
+  Salary: 60000,
+  Designation: "Data Analyst",
+  Age: 26,
+  Expertise: ["Python", "PowerBI", "SQL"],
+  DOB: "1998-05-17",
+  Email: "sneha@wipro.com",
+  Contact: "9999900004",
+  Address: [
+    {PAddr: "Mumbai", LAddr: "Pune"}
+  ]
+},
+
+{
+  Emp_id: 5,
+  Name: {FName: "Rohan", LName: "Jadhav"},
+  Company_name: "Capgemini",
+  Salary: 48000,
+  Designation: "System Engineer",
+  Age: 29,
+  Expertise: ["Linux", "Networking", "AWS"],
+  DOB: "1995-11-30",
+  Email: "rohan@capgemini.com",
+  Contact: "9999900005",
+  Address: [
+    {PAddr: "Kolhapur", LAddr: "Mumbai"}
+  ]
+}
+]);
+
+db.employee.find(
+ {Age:{$lt:30}, Salary:{$gt:50000}},
+ {"Name.FName":1, "Name.LName":1}
+);
+
+
+db.employee.updateOne(
+ {Designation:"Tester", Company_name:"TCS", Age:25},
+ {$setOnInsert:{Name:{FName:"Temp",LName:"User"}}},
+ {upsert:true}
+);
+
+
+db.employee.find({$or:[{Age:{$lt:30}}, {Salary:{$gt:40000}}]});
+
+
+db.employee.find({Designation:{$ne:"Developer"}});
+
+
+db.employee.find(
+ {Company_name:"Infosys"},
+ {_id:1,Designation:1,Address:1,Name:1}
+);
+
+
+db.employee.find({}, {"Name.FName":1, "Name.LName":1});

@@ -1,0 +1,97 @@
+SQL Queries:
+Create following tables with suitable constraints (primary key,
+foreign key, not null etc).
+Insert record and solve the following queries:
+Create table Cust_Master(Cust_no, Cust_name, Cust_addr)
+Create table Order(Order_no, Cust_no, Order_date, Qty_Ordered)
+Create Product(Product_no, Product_name, Order_no)
+1. List names of customers having 'A' as second letter in their
+name.
+2. Display order from Customer no C1002,C1005,C1007 and C1008
+3. List Clients who stay in either 'Banglore or 'Manglore'
+4. Display name of customers& the product_name they have purchase
+5. Create view View1 consisting of Cust_name, Product_name.
+6. Disply product_name and quantity purchase by each customer
+7. Perform different joint operation.
+
+
+
+CREATE TABLE Cust_Master(
+  Cust_no VARCHAR(10) PRIMARY KEY,
+  Cust_name VARCHAR(30),
+  Cust_addr VARCHAR(50)
+);
+
+CREATE TABLE Orders(
+  Order_no INT PRIMARY KEY,
+  Cust_no VARCHAR(10),
+  Order_date DATE,
+  Qty_Ordered INT,
+  FOREIGN KEY(Cust_no) REFERENCES Cust_Master(Cust_no)
+);
+
+CREATE TABLE Product(
+  Product_no INT PRIMARY KEY,
+  Product_name VARCHAR(30),
+  Order_no INT,
+  FOREIGN KEY(Order_no) REFERENCES Orders(Order_no)
+);
+INSERT INTO Cust_Master VALUES
+('C1001','Ravi','Pune'),
+('C1002','Anita','Mumbai'),
+('C1005','Sahil','Bangalore'),
+('C1007','Megha','Mangalore'),
+('C1008','Amit','Mumbai');
+
+INSERT INTO Orders VALUES
+(1,'C1002','2024-01-05',3),
+(2,'C1005','2024-02-07',5),
+(3,'C1007','2024-03-12',2),
+(4,'C1008','2024-04-15',1);
+
+INSERT INTO Product VALUES
+(10,'Keyboard',1),
+(11,'Mouse',2),
+(12,'Laptop',3),
+(13,'Monitor',4);
+
+
+SELECT Cust_name FROM Cust_Master
+WHERE Cust_name LIKE '_A%';
+
+
+SELECT * FROM Orders
+WHERE Cust_no IN ('C1002','C1005','C1007','C1008');
+
+
+SELECT * FROM Cust_Master
+WHERE Cust_addr IN ('Bangalore','Mangalore');
+
+
+SELECT c.Cust_name, p.Product_name
+FROM Cust_Master c
+JOIN Orders o ON c.Cust_no = o.Cust_no
+JOIN Product p ON o.Order_no = p.Order_no;
+
+
+CREATE VIEW View1 AS
+SELECT c.Cust_name, p.Product_name
+FROM Cust_Master c
+JOIN Orders o ON c.Cust_no = o.Cust_no
+JOIN Product p ON o.Order_no = p.Order_no;
+
+SELECT c.Cust_name, p.Product_name, o.Qty_Ordered
+FROM Cust_Master c
+JOIN Orders o ON c.Cust_no = o.Cust_no
+JOIN Product p ON o.Order_no = p.Order_no;
+
+
+SELECT * FROM Cust_Master c JOIN Orders o ON c.Cust_no = o.Cust_no;
+
+
+SELECT * FROM Cust_Master c LEFT JOIN Orders o ON c.Cust_no = o.Cust_no;
+
+
+SELECT * FROM Cust_Master c RIGHT JOIN Orders o ON c.Cust_no = o.Cust_no;
+
+

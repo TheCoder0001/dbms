@@ -1,0 +1,123 @@
+Consider following Relation
+Account(Acc_no, branch_name,balance)
+Branch(branch_name,branch_city,assets)
+Customer(cust_name,cust_street,cust_city)
+Depositor(cust_name,acc_no)
+Loan(loan_no,branch_name,amount)
+Borrower(cust_name,loan_no)
+Execute the following query:
+1. Create a View1 to display List all customers in alphabetical
+order who have loan from Pune_Station branch.
+2. Create View2 on branch table by selecting any two columns and
+perform insert update delete operations.
+3. Create View3 on borrower and depositor table by selecting any
+one column from each table perform insert update delete
+operations.
+4. Create Union of left and right joint for all customers who
+have an account or loan or both at bank
+5. Create Simple and Unique index.
+6. Display index Information.
+
+
+CREATE TABLE Branch(
+    branch_name VARCHAR(50) PRIMARY KEY,
+    branch_city VARCHAR(50),
+    assets INT
+);
+
+CREATE TABLE Account(
+    Acc_no INT PRIMARY KEY,
+    branch_name VARCHAR(50),
+    balance INT,
+    FOREIGN KEY(branch_name) REFERENCES Branch(branch_name)
+);
+
+CREATE TABLE Customer(
+    cust_name VARCHAR(50) PRIMARY KEY,
+    cust_street VARCHAR(50),
+    cust_city VARCHAR(50)
+);
+
+CREATE TABLE Depositor(
+    cust_name VARCHAR(50),
+    acc_no INT,
+    FOREIGN KEY(cust_name) REFERENCES Customer(cust_name),
+    FOREIGN KEY(acc_no) REFERENCES Account(acc_no)
+);
+
+CREATE TABLE Loan(
+    loan_no INT PRIMARY KEY,
+    branch_name VARCHAR(50),
+    amount INT,
+    FOREIGN KEY(branch_name) REFERENCES Branch(branch_name)
+);
+
+CREATE TABLE Borrower(
+    cust_name VARCHAR(50),
+    loan_no INT,
+    FOREIGN KEY(cust_name) REFERENCES Customer(cust_name),
+    FOREIGN KEY(loan_no) REFERENCES Loan(loan_no)
+);
+
+INSERT INTO Branch VALUES
+('Pune_Station','Pune',900000),
+('Wadia College','Pune',600000),
+('Camp','Pune',750000);
+
+INSERT INTO Account VALUES
+(101,'Pune_Station',15000),
+(102,'Wadia College',22000),
+(103,'Camp',18000);
+
+INSERT INTO Customer VALUES
+('Rohan','MG Road','Pune'),
+('Meera','FC Road','Pune'),
+('Ajay','Camp','Pune');
+
+INSERT INTO Depositor VALUES
+('Rohan',101),('Meera',102),('Ajay',103);
+
+INSERT INTO Loan VALUES
+(501,'Pune_Station',20000),
+(502,'Wadia College',13000),
+(503,'Camp',18000);
+
+INSERT INTO Borrower VALUES
+('Rohan',501),('Meera',502),('Ajay',503);
+
+
+
+CREATE VIEW View1 AS
+SELECT Borrower.cust_name
+FROM Borrower
+JOIN Loan ON Borrower.loan_no = Loan.loan_no
+WHERE Loan.branch_name='Pune_Station'
+ORDER BY cust_name;
+
+
+CREATE VIEW View2 AS
+SELECT branch_name, branch_city FROM Branch;
+
+INSERT INTO View2 VALUES ('Katraj','Pune');
+UPDATE View2 SET branch_city='Mumbai' WHERE branch_name='Camp';
+DELETE FROM View2 WHERE branch_name='Katraj';
+
+
+CREATE VIEW View3 AS
+SELECT Borrower.cust_name, Depositor.acc_no
+FROM Borrower
+JOIN Depositor USING (cust_name);
+
+
+SELECT cust_name FROM Depositor
+UNION
+SELECT cust_name FROM Borrower;
+
+
+CREATE INDEX idx_branch_city ON Branch(branch_city);
+CREATE UNIQUE INDEX idx_acc_no ON Account(acc_no);
+
+
+SHOW INDEX FROM Branch;
+SHOW INDEX FROM Account;
+

@@ -1,0 +1,63 @@
+Write a Unnamed PL/SQL of code for the following requirements:-
+Schema:
+ Borrower (Rollin, Name, DateofIssue, NameofBook, Status)
+ Fine (Roll_no,Date,Amt)
+Accept roll_no & name of book from user.
+Check the number of days (from date of issue).
+1. If days are between 15 to 30 then fine amounts will be Rs 5
+per day.
+2. If no. of days>30, per day fine will be Rs 50 per day & for
+days less than 30, Rs. 5 per day.
+3. After submitting the book, status will change from I to R.
+4. If condition of fine is true, then details will be stored into
+fine table.
+
+
+
+CREATE TABLE Borrower (
+  Roll_no NUMBER PRIMARY KEY,
+  Name VARCHAR2(30),
+  Date_of_Issue DATE,
+  Name_of_Book VARCHAR2(40),
+  Status CHAR(1)
+);
+
+CREATE TABLE Fine (
+  Roll_no NUMBER,
+  Date DATE,
+  Amount NUMBER,
+  FOREIGN KEY (Roll_no) REFERENCES Borrower(Roll_no)
+);
+INSERT INTO Borrower VALUES (101, 'Rohan', '01-JAN-2025', 'DBMS', 'I');
+INSERT INTO Borrower VALUES (102, 'Priya', '10-JAN-2025', 'CN', 'I');
+
+DECLARE
+  v_roll Borrower.Roll_no%TYPE := &RollNo;
+  v_book Borrower.Name_of_Book%TYPE := '&BookName';
+  v_issue_date DATE;
+  v_days NUMBER;
+  v_amount NUMBER;
+BEGIN
+  SELECT Date_of_Issue INTO v_issue_date 
+  FROM Borrower 
+  WHERE Roll_no = v_roll AND Name_of_Book = v_book;
+  
+  v_days := SYSDATE - v_issue_date;
+  
+  IF v_days BETWEEN 15 AND 30 THEN
+    v_amount := v_days * 5;
+  ELSIF v_days > 30 THEN
+    v_amount := (30 * 5) + ((v_days - 30) * 50);
+  ELSE 
+    v_amount := 0;
+  END IF;
+
+  UPDATE Borrower SET Status = 'R' WHERE Roll_no = v_roll;
+
+  IF v_amount > 0 THEN
+    INSERT INTO Fine VALUES (v_roll, SYSDATE, v_amount);
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('Book Returned. Fine = ' || v_amount);
+END;
+/

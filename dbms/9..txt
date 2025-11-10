@@ -1,0 +1,77 @@
+SQL Queries
+Create following tables with suitable constraints. Insert data and
+solve the following queries:
+CUSTOMERS(CNo, Cname, Ccity, CMobile)
+ITEMS(INo, Iname, Itype, Iprice, Icount)
+PURCHASE(PNo, Pdate, Pquantity, Cno, INo)
+1. List all stationary items with price between 400/- to 1000/-
+2. Change the mobile number of customer “Gopal”
+3. Display the item with maximum price
+4. Display all purchases sorted from the most recent to the
+oldest
+5. Count the number of customers in every city
+6. Display all purchased quantity of Customer Maya
+7. Create view which shows Iname, Price and Count of all
+stationary items in descending order of price.
+
+
+CREATE TABLE CUSTOMERS(
+    CNo INT PRIMARY KEY,
+    Cname VARCHAR(50),
+    Ccity VARCHAR(50),
+    CMobile VARCHAR(15)
+);
+
+CREATE TABLE ITEMS(
+    INo INT PRIMARY KEY,
+    Iname VARCHAR(50),
+    Itype VARCHAR(50),
+    Iprice INT,
+    Icount INT
+);
+
+CREATE TABLE PURCHASE(
+    PNo INT PRIMARY KEY,
+    Pdate DATE,
+    Pquantity INT,
+    Cno INT,
+    INo INT,
+    FOREIGN KEY(Cno) REFERENCES CUSTOMERS(Cno),
+    FOREIGN KEY(INo) REFERENCES ITEMS(INo)
+);
+
+INSERT INTO CUSTOMERS VALUES
+(1,'Gopal','Pune','9999999999'),
+(2,'Maya','Mumbai','8888888888'),
+(3,'Raju','Pune','7777777777');
+
+INSERT INTO ITEMS VALUES
+(10,'Pen','Stationary',20,100),
+(11,'Notebook','Stationary',60,50),
+(12,'File','Stationary',120,30);
+
+INSERT INTO PURCHASE VALUES
+(101,'2024-01-10',5,1,10),
+(102,'2024-02-11',2,2,11),
+(103,'2024-03-12',3,2,12);
+
+
+SELECT * FROM ITEMS WHERE Iprice BETWEEN 400 AND 1000;
+
+UPDATE CUSTOMERS SET CMobile='9999999999' WHERE Cname='Gopal';
+
+SELECT * FROM ITEMS WHERE Iprice = (SELECT MAX(Iprice) FROM ITEMS);
+
+SELECT * FROM PURCHASE ORDER BY Pdate DESC;
+
+SELECT Ccity, COUNT(*) FROM CUSTOMERS GROUP BY Ccity;
+
+SELECT SUM(Pquantity) AS Total FROM PURCHASE
+JOIN CUSTOMERS USING (CNo)
+WHERE Cname='Maya';
+
+CREATE VIEW V1 AS
+SELECT Iname, Iprice, Icount
+FROM ITEMS
+WHERE Itype='Stationary'
+ORDER BY Iprice DESC;

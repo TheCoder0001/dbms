@@ -1,0 +1,45 @@
+Write a Row Level Before and After Trigger on Library table. The
+System should keep track of the records that are being updated or
+deleted. The old value of updated or deleted records should be
+added in Library_Audit table.
+
+
+
+
+
+CREATE TABLE Library(
+   Book_id NUMBER PRIMARY KEY,
+   Book_name VARCHAR2(50)
+);
+
+CREATE TABLE Library_Audit(
+   Book_id NUMBER,
+   Book_name VARCHAR2(50),
+   Action_Date DATE,
+   Action_Type VARCHAR2(10)
+);
+
+INSERT INTO Library VALUES (1,'DBMS');
+INSERT INTO Library VALUES (2,'CN');
+
+CREATE OR REPLACE TRIGGER trg_Library_Audit
+BEFORE UPDATE OR DELETE ON Library
+FOR EACH ROW
+BEGIN
+   INSERT INTO Library_Audit VALUES(:OLD.Book_id, :OLD.Book_name, SYSDATE,
+   CASE WHEN UPDATING THEN 'UPDATE' ELSE 'DELETE' END);
+END;
+/
+
+
+OR 
+
+CREATE TABLE Library_Audit(old_value VARCHAR(100), action_date DATE);
+
+CREATE OR REPLACE TRIGGER Lib_Audit
+BEFORE DELETE OR UPDATE ON Library
+FOR EACH ROW
+BEGIN
+  INSERT INTO Library_Audit VALUES(:OLD.book_name, SYSDATE);
+END;
+/

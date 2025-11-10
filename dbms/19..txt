@@ -1,0 +1,43 @@
+Write a PL/SQL Block to increase the salary of employees by 10%
+of existing salary, who are having salary less than average
+salary of organization, whenever such salary updates takes place,
+a record for same is maintained in the increment_salary table.
+emp(emp_no, salary)
+increment_salary(emp_no, salary)
+
+
+
+
+CREATE TABLE emp(emp_no NUMBER PRIMARY KEY, salary NUMBER);
+CREATE TABLE increment_salary(emp_no NUMBER, salary NUMBER);
+
+INSERT INTO emp VALUES (1,30000);
+INSERT INTO emp VALUES (2,45000);
+INSERT INTO emp VALUES (3,55000);
+
+DECLARE
+  v_avg NUMBER;
+BEGIN
+  SELECT AVG(salary) INTO v_avg FROM emp;
+
+  FOR rec IN (SELECT * FROM emp WHERE salary < v_avg) LOOP
+    UPDATE emp SET salary = salary + (salary * 0.10) WHERE emp_no = rec.emp_no;
+    INSERT INTO increment_salary VALUES(rec.emp_no, rec.salary*1.10);
+  END LOOP;
+END;
+/
+
+
+OR
+
+DECLARE
+  v_avg NUMBER;
+BEGIN
+  SELECT AVG(salary) INTO v_avg FROM emp;
+
+  INSERT INTO increment_salary
+  SELECT emp_no, salary*1.10 FROM emp WHERE salary < v_avg;
+
+  UPDATE emp SET salary = salary*1.10 WHERE salary < v_avg;
+END;
+/
