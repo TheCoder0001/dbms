@@ -22,6 +22,23 @@ CREATE TABLE Library_Audit(
 INSERT INTO Library VALUES (1,'DBMS');
 INSERT INTO Library VALUES (2,'CN');
 
+correct : 
+CREATE OR REPLACE TRIGGER trg_Library_Audit
+BEFORE UPDATE OR DELETE ON Library
+FOR EACH ROW
+BEGIN
+   IF UPDATING THEN
+      INSERT INTO Library_Audit 
+      VALUES(:OLD.Book_id, :OLD.Book_name, SYSDATE, 'UPDATE');
+   ELSIF DELETING THEN
+      INSERT INTO Library_Audit 
+      VALUES(:OLD.Book_id, :OLD.Book_name, SYSDATE, 'DELETE');
+   END IF;
+END;
+/
+
+
+
 CREATE OR REPLACE TRIGGER trg_Library_Audit
 BEFORE UPDATE OR DELETE ON Library
 FOR EACH ROW
